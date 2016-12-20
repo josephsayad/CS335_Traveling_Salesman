@@ -6,7 +6,86 @@
 //  Copyright © 2016 Joseph Sayad. All rights reserved.
 //
 
-#include <iostream>
 #include "InputParser.h"
 
 using namespace std;
+
+/* Explicitly-defined default constructor */
+  
+InputParser::InputParser() {}
+
+/* Parsing Functionality */
+
+void InputParser::parseFile(const string& inputFileName) {
+  ifstream inputFileHandler(inputFileName);
+ 
+  //  Error Handling conditional...
+  if(!inputFileHandler.is_open()) {
+  	
+    cout << "Input File (" << inputFileName << ") could not be read...\n";
+    cout << "Is the input file nested in the data sub-directory...?\n";
+  	
+    inputFileHandler.close();
+  	exit(1);
+  }
+
+  string lineOfFile, token, delimiter = ":";
+  pair<double, double> coordinates; 
+  double x_coord, y_coord;
+  unsigned int numberOfCities; 
+
+  while(getline(inputFileHandler, lineOfFile)) {
+  	removeWhiteSpace(lineOfFile);
+ 
+    if(lineOfFile.substr(0, 5) == "NAME:") {
+      lineOfFile.erase(0, 5);
+      stringstream strZero(lineOfFile); 
+      strZero >> token;
+
+      country_.setName(token);
+    }
+    
+    else if(lineOfFile.substr(0, 10) == "DIMENSION:") {
+      lineOfFile.erase(0, lineOfFile.find(delimiter) + delimiter.length()); 
+      stringstream strOne(lineOfFile);
+      strOne >> numberOfCities;
+
+      country_.setDimension(numberOfCities);
+    }
+
+    else if(lineOfFile.substr(0, 18) == "NODE_COORD_SECTION") 
+      break;
+  }
+
+  delimiter = " ";
+
+  while(getline(inputFileHandler, lineOfFile)) {
+    if(lineOfFile == "EOF") { break; }
+    
+    else {
+      lineOfFile.erase(0, lineOfFile.find(delimiter) + delimiter.length());
+      
+      /* token is x_coord and lineOfFile is y_coord */
+      token = lineOfFile.substr(0, lineOfFile.find(delimiter));	
+      lineOfFile.erase(0, lineOfFile.find(delimiter) + delimiter.length());
+
+      stringstream str_X_Coord(token);
+      stringstream str_Y_Coord(lineOfFile);
+
+      str_X_Coord >> x_coord;
+      str_Y_Coord >> y_coord;
+
+      
+      coordinates = make_pair(x_coord, y_coord);
+      country_.addCity(coordinates);
+    }
+  }
+
+  inputFileHandler.close();
+} 
+
+void InputParser::removeWhiteSpace(string& input) {  
+  input.erase(remove(input.begin(),input.end(), ' '),input.end());
+}
+
+void InputParser::printParsedData() const { cout << country_; }

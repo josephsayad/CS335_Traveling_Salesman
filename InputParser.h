@@ -10,10 +10,10 @@
 #define INPUTPARSER_H
 
 #include <iostream>
-#include <fstream> // parseFile()
+#include <fstream>
 #include <sstream>
-#include <string> // getline()
-#include <algorithm> // removeWhiteSpace()
+#include <string>
+#include <algorithm>
 #include "Country.h"
 
 using namespace std;
@@ -21,24 +21,32 @@ using namespace std;
 class InputParser {
   public:
   
-  /* Explicitly-defined default constructor */
+    /* Explicitly-defined default constructor */
   
-  InputParser();
+    InputParser();
 
-  /* Parsing Functionality */
+    /* Accessor Functions */
+    
+    vector<pair<double, double>> getCoordinates() const;
 
-  void parseFile(const string& inputFileName); 
-  void removeWhiteSpace(string& input);
+    /* Parsing Functionality */
 
-  /* Convenience functions */ 
+    void toParse(char* argv[]);
 
-  void printParsedData() const;
+    /* Convenience functions */ 
+
+    void printData() const;
 
   private: 
   
-  /* Private Data Members */
+    /* Private Data Members */
 
-  Country country_;
+    Country country_;
+
+    /* Private Member Parsing Functionality */
+ 
+    void parse(const string& inputFileName); 
+    void removeWhiteSpace(string& input);
 };
 
 #endif

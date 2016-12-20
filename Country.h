@@ -35,7 +35,7 @@ class Country {
     unsigned int getDimension() const;
     vector<pair<double, double>> getCoordinates() const;
 
-  	/* Overloading the console output operator */
+  	/* Overloading the operator<< */
 
   	friend ostream& operator<<(ostream& out, const Country& country);
 
@@ -51,8 +51,6 @@ class Country {
   	string name_; 
   	unsigned int dimension_;
     vector<pair<double, double>> cityCoordinates_;
-
-    // Node Struct! 
 };
 
 #endif

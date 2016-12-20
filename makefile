@@ -6,7 +6,7 @@ CFLAGS = -c -Wall
 # SOURCES includes all the .cpp files to compile.
 
 EXECUTABLE_NAME = Project2
-SOURCES = main.cpp Country.cpp InputParser.cpp
+SOURCES = main.cpp Country.cpp InputParser.cpp MethodControl.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 

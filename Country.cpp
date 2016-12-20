@@ -61,10 +61,10 @@ ostream& operator<<(ostream& out, const Country& country) {
 
 void Country::printCityCoord() const {
   for(int i = 0; i < cityCoordinates_.size(); ++i) {
-    cout << "City " << i + 1 << setw(2); 
+    cout << "City " << i + 1; 
     
-    if(i < 9) { cout << "    * ("; }
-    else { cout << "   * ("; }
+    if(i < 9) { cout << "  * ("; }
+    else { cout << " * ("; }
 
     cout << setprecision(10) << cityCoordinates_.at(i).first << ", " 
          << setprecision(10) << cityCoordinates_.at(i).second << ")\n";

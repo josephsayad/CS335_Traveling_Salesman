@@ -14,9 +14,39 @@ using namespace std;
   
 InputParser::InputParser() {}
 
+/* Accessor Functions */
+
+vector<pair<double, double>> InputParser::getCoordinates() const {
+  return country_.getCoordinates();
+}
+
 /* Parsing Functionality */
 
-void InputParser::parseFile(const string& inputFileName) {
+void InputParser::toParse(char* argv[]) {
+  if(argv[1] == nullptr) {
+    cout << "Please provide 1 input file...\n";
+    exit(1);
+  }
+
+  else if(argv[2] != nullptr) {
+    cout << "Only 1 input file is permitted in the execution of this program...\n";
+    exit(1);
+  }
+
+  else {
+    string inputDir = "data/";
+    string inputFileName = argv[1];
+    parse(inputDir + inputFileName);
+  }
+}
+
+/* Convenience functions */ 
+
+void InputParser::printData() const { cout << country_; }
+
+/* Parsing Member Parsing Functionality */
+
+void InputParser::parse(const string& inputFileName) {
   ifstream inputFileHandler(inputFileName);
  
   //  Error Handling conditional...
@@ -87,5 +117,3 @@ void InputParser::parseFile(const string& inputFileName) {
 void InputParser::removeWhiteSpace(string& input) {  
   input.erase(remove(input.begin(),input.end(), ' '),input.end());
 }
-
-void InputParser::printParsedData() const { cout << country_; }

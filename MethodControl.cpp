@@ -39,3 +39,8 @@ void MethodControl::greedyTSP() {
   methodOne(copyOfMap_, totalDistance);
   cout << "Distance: " << totalDistance << "\n";
 }
+
+void MethodControl::nearestInsertion() {
+  graphmap copyOfMap_ = theMap_; 
+  methodTwo(copyOfMap_);
+}

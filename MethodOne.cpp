@@ -39,7 +39,7 @@ void calculateWeightsAndRunGreedyTour(graphmap& theMap, double& totalDistance) {
         distance = getEuclideanDistance(theMap.at(keyToCurrNode), theMap.at(otherNodeKey));
         Edge *nextEdge = new Edge(distance, &theMap.at(keyToCurrNode), &theMap.at(otherNodeKey));
         queueOfEdges.push(*nextEdge);
-      }
+      } 
     }
   }
 
@@ -166,7 +166,7 @@ void traverseTour(graphmap& theMap) {
   prevNode = theMap.at(1).fromLastNode;
   currNode = &theMap.at(1);
   
-  cout << "Tour via Greedy TSP: " << currNode->name << " ->  ";
+  cout << "Tour via Greedy TSP: " << currNode->name << " <->  ";
 
   for(int i = 0; i < theMap.size(); ++i) {
     if(currNode->toNextNode != prevNode) {
@@ -180,6 +180,6 @@ void traverseTour(graphmap& theMap) {
     }
 
     if(i == theMap.size() - 1) { cout << currNode->name << "\n"; }
-    else { cout << currNode->name << " -> " << " "; } 
+    else { cout << currNode->name << " <-> " << " "; } 
   }
 }

@@ -15,6 +15,7 @@
 #include "InputParser.h"
 #include "Node.h"
 #include "MethodOne.h"
+#include "MethodTwo.h"
 
 using namespace std;
 
@@ -33,6 +34,7 @@ class MethodControl {
     /* Running the Algorithms */
 
     void greedyTSP();
+    void nearestInsertion();
 
   private:
 

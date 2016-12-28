@@ -10,12 +10,14 @@
 #define METHODCONTROL_H
 
 #include <iostream>
+#include <chrono>
 #include <unordered_map>
 
 #include "InputParser.h"
 #include "Node.h"
 #include "MethodOne.h"
 #include "MethodTwo.h"
+#include "MethodThree.h"
 
 using namespace std;
 
@@ -35,6 +37,10 @@ class MethodControl {
 
     void greedyTSP();
     void nearestInsertion();
+    void nearestNeighbor();
+
+    /* Convenience Function */
+    void printDivider();
 
   private:
 

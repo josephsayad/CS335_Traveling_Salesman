@@ -4,10 +4,11 @@
 using namespace std;
 
 int main(int argc, char* argv[]) { 
-  MethodControl controllerOne; 
+  MethodControl controllerOne;
   controllerOne.fetchCommandLineArg(argv);
   controllerOne.fillGraph();
-  // controllerOne.greedyTSP();
+  controllerOne.greedyTSP();
   controllerOne.nearestInsertion();
+  controllerOne.nearestNeighbor();
   return 0;
 }

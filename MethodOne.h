@@ -25,7 +25,7 @@ void methodOne(graphmap& theMap, double& totalDistance);
 
 double getEuclideanDistance(const Node& currNode, const Node& nodeToCompare);
 
-void calculateWeightsAndRunGreedyTour(graphmap& theMap, double& totalDistance);
+void getWeights(graphmap& theMap, double& totalDistance);
 
 double tour(graphmap& theMap, minimumPriority queueOfEdges);
 

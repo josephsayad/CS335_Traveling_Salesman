@@ -11,8 +11,34 @@
 using namespace std;
 
 void methodOne(graphmap& theMap, double& totalDistance) {
-  calculateWeightsAndRunGreedyTour(theMap, totalDistance);
+  getWeights(theMap, totalDistance);
   traverseTour(theMap);
+}
+
+void getWeights(graphmap& theMap, double& totalDistance) {
+  minimumPriority queueOfEdges;
+  double distance = 0.0;
+
+  /* For each node in a collection of N nodes... */
+
+  for (unsigned int keyToCurrNode = 1; keyToCurrNode <= theMap.size(); ++keyToCurrNode) {
+    
+    /* Caluclate the distance to all other nodes */
+
+    for(unsigned int otherNodeKey = 1; otherNodeKey <= theMap.size(); ++otherNodeKey) {
+      if(otherNodeKey == keyToCurrNode) { /* Do Nothing */ }
+      
+      /* Store distances in a Priority Queue : Underlying Heap Sort */
+
+      else {
+        distance = getEuclideanDistance(theMap.at(keyToCurrNode), theMap.at(otherNodeKey));
+        Edge *nextEdge = new Edge(distance, theMap.at(keyToCurrNode).name, theMap.at(otherNodeKey).name);
+        queueOfEdges.push(*nextEdge);
+      } 
+    }
+  }
+  
+  totalDistance = tour(theMap, queueOfEdges);
 }
 
 double getEuclideanDistance(const Node& currNode, const Node& nodeToCompare) {
@@ -22,30 +48,6 @@ double getEuclideanDistance(const Node& currNode, const Node& nodeToCompare) {
   return sqrt(x_value + y_value);
 }
 
-/* O(n^2) steps */
-void calculateWeightsAndRunGreedyTour(graphmap& theMap, double& totalDistance) {
-  minimumPriority queueOfEdges;
-  double distance = 0.0;
-
-  /* For each node in a collection of N nodes... */
-  for (unsigned int keyToCurrNode = 1; keyToCurrNode <= theMap.size(); ++keyToCurrNode) {
-    
-    /* Caluclate the distance to all other nodes */
-    for(int otherNodeKey = 1; otherNodeKey <= theMap.size(); ++otherNodeKey) {
-      if(otherNodeKey == keyToCurrNode) { /* Do Nothing */ }
-      
-      /* Store distances in a Priority Queue : Underlying Heap Sort */
-      else {
-        distance = getEuclideanDistance(theMap.at(keyToCurrNode), theMap.at(otherNodeKey));
-        Edge *nextEdge = new Edge(distance, &theMap.at(keyToCurrNode), &theMap.at(otherNodeKey));
-        queueOfEdges.push(*nextEdge);
-      } 
-    }
-  }
-
-  totalDistance = tour(theMap, queueOfEdges);
-}
-
 double tour(graphmap& theMap, minimumPriority queueOfEdges) {
   const unsigned int sizeOfQueue = queueOfEdges.size();
   unsigned int numberOfEdges = 0;
@@ -53,26 +55,22 @@ double tour(graphmap& theMap, minimumPriority queueOfEdges) {
 
   for(int i = 0; i < sizeOfQueue; ++i) {
     const Edge *edgeToAdd = &queueOfEdges.top();
-    Node *nodeOnePtr, *nodeTwoPtr;
+    unsigned int keyOne, keyTwo;
 
-    nodeOnePtr = edgeToAdd->nodeOne;
-    nodeTwoPtr = edgeToAdd->nodeTwo;
+    keyOne = edgeToAdd->nameOfNodeOne;
+    keyTwo = edgeToAdd->nameOfNodeTwo;
+  
+    if(formsDegreeOfThree(theMap.at(keyOne), theMap.at(keyTwo))) {}
 
- 
-    if(formsDegreeOfThree(*nodeOnePtr, *nodeTwoPtr)) {
-      queueOfEdges.pop();
-    }
-
-    else if (formsCycle(theMap, *nodeOnePtr, *nodeTwoPtr, numberOfEdges)) {
-      queueOfEdges.pop();
-    }
+    else if(formsCycle(theMap, theMap.at(keyOne), theMap.at(keyTwo), numberOfEdges)) {}
 
     else {
       costOfTour += edgeToAdd->weight;
-      connect(*nodeOnePtr, *nodeTwoPtr);
+      connect(theMap.at(keyOne), theMap.at(keyTwo));
       ++numberOfEdges;
-      queueOfEdges.pop(); 
     }
+
+    queueOfEdges.pop();
   }
 
   return costOfTour;
@@ -93,20 +91,19 @@ bool formsCycle(graphmap& theMap, Node& node, Node& nodeToConnectWith, unsigned 
     currNode = &node;
 
     /* Traversal */
-
-    while(currNode->toNextNode != nullptr || currNode->fromLastNode != nullptr) {
+    while(currNode->ptrOne != nullptr || currNode->ptrTwo != nullptr) {
       if(currNode->name == nodeToConnectWith.name) {
         break;
       } 
 
-      if(currNode->toNextNode != nullptr && currNode->toNextNode != prevNode) {      
+      if(currNode->ptrOne != nullptr && currNode->ptrOne != prevNode) {      
         prevNode = currNode;
-        currNode = currNode->toNextNode;
+        currNode = currNode->ptrOne;
       }
 
-      else if(currNode->fromLastNode != nullptr && currNode->fromLastNode != prevNode) {
+      else if(currNode->ptrTwo != nullptr && currNode->ptrTwo != prevNode) {
         prevNode = currNode;
-        currNode = currNode->fromLastNode;
+        currNode = currNode->ptrTwo;
       }
 
       else {
@@ -122,6 +119,7 @@ bool formsCycle(graphmap& theMap, Node& node, Node& nodeToConnectWith, unsigned 
       if(numberOfEdges == theMap.size() - 1) { 
         return false; 
       }
+
       else { 
         return true; 
       }
@@ -137,49 +135,60 @@ bool formsCycle(graphmap& theMap, Node& node, Node& nodeToConnectWith, unsigned 
 }
 
 void connect(Node& nodeOne, Node& nodeTwo) {
-  if(nodeOne.toNextNode == nullptr && nodeTwo.fromLastNode == nullptr) {
-    nodeOne.toNextNode = &nodeTwo;
-    nodeTwo.fromLastNode = &nodeOne;
+  if(nodeOne.ptrOne == &nodeTwo && nodeOne.ptrTwo == &nodeTwo) {
+    nodeOne.ptrTwo = nullptr;
   }
-  
-  else if(nodeOne.toNextNode != nullptr && nodeTwo.fromLastNode == nullptr) {
-    nodeOne.fromLastNode = &nodeTwo;
-    nodeTwo.fromLastNode = &nodeOne;
-  }
-
-  else if(nodeOne.toNextNode != nullptr && nodeTwo.fromLastNode != nullptr) {
-    nodeOne.fromLastNode = &nodeTwo;
-    nodeTwo.toNextNode = &nodeOne;
+  else if(nodeTwo.ptrOne == &nodeTwo && nodeOne.ptrTwo == &nodeTwo) {
+    nodeTwo.ptrTwo = nullptr;
   }
 
   else {
-    nodeOne.toNextNode = &nodeTwo;
-    nodeTwo.toNextNode = &nodeOne;
+  if(nodeOne.ptrOne == nullptr && nodeTwo.ptrTwo == nullptr) {
+    nodeOne.ptrOne = &nodeTwo;
+    nodeTwo.ptrTwo  = &nodeOne;
+  }
+
+  else if(nodeOne.ptrOne != nullptr && nodeTwo.ptrTwo != nullptr) {
+    nodeOne.ptrTwo  = &nodeTwo;
+    nodeTwo.ptrOne = &nodeOne;
+  }
+ 
+  else if(nodeOne.ptrOne != nullptr && nodeTwo.ptrTwo == nullptr) {
+    nodeOne.ptrTwo  = &nodeTwo;
+    nodeTwo.ptrTwo  = &nodeOne;
+  }
+
+  else if(nodeOne.ptrOne == nullptr && nodeTwo.ptrTwo != nullptr) {
+    nodeOne.ptrOne = &nodeTwo;
+    nodeTwo.ptrOne = &nodeOne;
   }
 }
+} 
+
 
 void traverseTour(graphmap& theMap) {
   Node *currNode; 
   Node *prevNode;  
 
   /* Start at any node: Node with key 1 */
-  prevNode = theMap.at(1).fromLastNode;
+  
+  prevNode = theMap.at(1).ptrTwo;
   currNode = &theMap.at(1);
   
-  cout << "Tour via Greedy TSP: " << currNode->name << " <->  ";
+  cout << "Tour: " << currNode->name << " -> ";
 
   for(int i = 0; i < theMap.size(); ++i) {
-    if(currNode->toNextNode != prevNode) {
+    if(currNode->ptrOne != prevNode) {
       prevNode = currNode;
-      currNode = currNode->toNextNode;
+      currNode = currNode->ptrOne;
     }
 
     else {
       prevNode = currNode;
-      currNode = currNode->fromLastNode;
+      currNode = currNode->ptrTwo;
     }
 
     if(i == theMap.size() - 1) { cout << currNode->name << "\n"; }
-    else { cout << currNode->name << " <-> " << " "; } 
+    else { cout << currNode->name << " -> " << " "; } 
   }
 }

@@ -59,57 +59,62 @@ void InputParser::parse(const string& inputFileName) {
   	exit(1);
   }
 
-  string lineOfFile, token, delimiter = ":";
-  pair<double, double> coordinates; 
-  double x_coord, y_coord;
-  unsigned int numberOfCities; 
-
-  while(getline(inputFileHandler, lineOfFile)) {
-  	removeWhiteSpace(lineOfFile);
- 
-    if(lineOfFile.substr(0, 5) == "NAME:") {
-      lineOfFile.erase(0, 5);
-      stringstream strZero(lineOfFile); 
-      strZero >> token;
-
-      country_.setName(token);
+    string lineOfFile, token, delimiter = ":";
+    pair<double, double> coordinates;
+    double x_coord, y_coord;
+    unsigned int numberOfCities;
+    int cityCount = 1;
+    
+    while(getline(inputFileHandler, lineOfFile)) {
+        removeWhiteSpace(lineOfFile);
+        
+        if(lineOfFile.substr(0, 5) == "NAME:") {
+            lineOfFile.erase(0, 5);
+            stringstream strZero(lineOfFile);
+            strZero >> token;
+            
+            country_.setName(token);
+        }
+        
+        else if(lineOfFile.substr(0, 10) == "DIMENSION:") {
+            lineOfFile.erase(0, lineOfFile.find(delimiter) + delimiter.length());
+            stringstream strOne(lineOfFile);
+            strOne >> numberOfCities;
+            
+            country_.setDimension(numberOfCities);
+        }
+        
+        else if(lineOfFile.substr(0, 18) == "NODE_COORD_SECTION")
+            break;
     }
     
-    else if(lineOfFile.substr(0, 10) == "DIMENSION:") {
-      lineOfFile.erase(0, lineOfFile.find(delimiter) + delimiter.length()); 
-      stringstream strOne(lineOfFile);
-      strOne >> numberOfCities;
-
-      country_.setDimension(numberOfCities);
-    }
-
-    else if(lineOfFile.substr(0, 18) == "NODE_COORD_SECTION") 
-      break;
-  }
-
-  delimiter = " ";
-
-  while(getline(inputFileHandler, lineOfFile)) {
-    if(lineOfFile == "EOF") { break; }
+    delimiter = " ";
     
-    else {
-      lineOfFile.erase(0, lineOfFile.find(delimiter) + delimiter.length());
-      
-      /* token is x_coord and lineOfFile is y_coord */
-      token = lineOfFile.substr(0, lineOfFile.find(delimiter));	
-      lineOfFile.erase(0, lineOfFile.find(delimiter) + delimiter.length());
-
-      stringstream str_X_Coord(token);
-      stringstream str_Y_Coord(lineOfFile);
-
-      str_X_Coord >> x_coord;
-      str_Y_Coord >> y_coord;
-
-      
-      coordinates = make_pair(x_coord, y_coord);
-      country_.addCity(coordinates);
+    while(getline(inputFileHandler, lineOfFile)) {
+        if(lineOfFile == "EOF") { break; }
+        
+        else {
+            lineOfFile.erase(0, lineOfFile.find(delimiter) + delimiter.length());
+            
+            /* token is x_coord and lineOfFile is y_coord */
+            token = lineOfFile.substr(0, lineOfFile.find(delimiter));
+            lineOfFile.erase(0, lineOfFile.find(delimiter) + delimiter.length());
+            
+            stringstream str_X_Coord(token);
+            stringstream str_Y_Coord(lineOfFile);
+            
+            str_X_Coord >> x_coord;
+            str_Y_Coord >> y_coord;
+            
+            if(cityCount > numberOfCities) {}
+            
+            else {      
+                coordinates = make_pair(x_coord, y_coord);
+                country_.addCity(coordinates);
+                ++cityCount;
+            }
+        }
     }
-  }
 
   inputFileHandler.close();
 } 

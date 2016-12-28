@@ -16,14 +16,16 @@ struct Node {
   unsigned int name;
   double x_coord;
   double y_coord;
+  bool isOnTour;
 
-  Node *toNextNode;
-  Node *fromLastNode; 
+  Node *ptrOne;
+  Node *ptrTwo; 
 
   /* Overloading the Struct Constructor */
   
   Node(const unsigned int& init_name, const double& init_x, const double& init_y) 
-    : name{init_name}, x_coord{init_x}, y_coord{init_y}, toNextNode{nullptr}, fromLastNode{nullptr}  {}
+    : name{init_name}, x_coord{init_x}, y_coord{init_y}, isOnTour{false},
+      ptrOne{nullptr}, ptrTwo{nullptr} {}
 
   /* Overloading the operator<< */
   
@@ -33,24 +35,28 @@ struct Node {
   }
 
   bool hasTwoEdges() const { 
-    return toNextNode != nullptr && fromLastNode != nullptr; 
+    return ptrOne != nullptr && ptrTwo != nullptr; 
   }
 
   bool hasOneEdge() const {
-    if(toNextNode != nullptr && fromLastNode == nullptr) return true;
-    if(toNextNode == nullptr && fromLastNode != nullptr) return true;
+    if(ptrOne != nullptr && ptrTwo == nullptr) { return true; }
+    if(ptrOne == nullptr && ptrTwo != nullptr) { return true; }
     else { return false; }
+  }
+
+  bool isAdjacent(Node& nodeToCompare) const {
+   return ptrOne == &nodeToCompare || ptrTwo == &nodeToCompare;
   }
 };
 
 struct Edge {
   double weight;
     
-  Node* nodeOne; 
-  Node* nodeTwo;
+  unsigned int nameOfNodeOne;
+  unsigned int nameOfNodeTwo;
 
-  Edge(const double& init_weight, Node *addressOne, Node *addressTwo) 
-    : weight{init_weight}, nodeOne{addressOne}, nodeTwo{addressTwo}  {}
+  Edge(const double& init_weight, const unsigned init_node_one, const unsigned init_node_two) 
+    : weight{init_weight}, nameOfNodeOne{init_node_one}, nameOfNodeTwo{init_node_two}  {}
 };
 
 struct GreaterThanByWeight {

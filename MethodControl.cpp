@@ -34,13 +34,49 @@ void MethodControl::fillGraph() {
 
 void MethodControl::greedyTSP() {
   graphmap copyOfMap_ = theMap_; 
-  double totalDistance = 0.0;
+  double totalDistance = 0.0, timeForMethod = 0.0;
+  
 
+  auto start = chrono::steady_clock::now();
   methodOne(copyOfMap_, totalDistance);
-  cout << "Distance: " << totalDistance << "\n";
+  auto end = chrono::steady_clock::now();
+  auto diff = end - start;
+  timeForMethod = chrono::duration <double, milli> (diff).count();
+
+  cout << "Distance for Greedy TSP Algorithm: " << totalDistance << "\n";
+  cout << "Time: " << timeForMethod << "ms.\n";
+  printDivider();
 }
 
 void MethodControl::nearestInsertion() {
   graphmap copyOfMap_ = theMap_; 
+  double timeForMethod = 0.0;
+  
+  auto start = chrono::steady_clock::now();
   methodTwo(copyOfMap_);
+  auto end = chrono::steady_clock::now();
+  auto diff = end - start;
+  timeForMethod = chrono::duration <double, milli> (diff).count();
+
+  cout << "Time: " << timeForMethod << "ms.\n";
+  printDivider();
+}
+
+void MethodControl::nearestNeighbor() {
+  graphmap copyOfMap_ = theMap_;
+  double totalDistance = 0.0, timeForMethod = 0.0;
+
+  auto start = chrono::steady_clock::now();
+  methodThree(copyOfMap_, totalDistance);
+  auto end = chrono::steady_clock::now();
+  auto diff = end - start;
+  timeForMethod = chrono::duration <double, milli> (diff).count();
+
+  
+  cout << "Distance for Nearest Neighbor Algorithm: " << totalDistance << "\n";
+  cout << "Time: " << timeForMethod << "ms.\n";
+}
+
+void MethodControl::printDivider() {
+  cout << "***********************************************\n";
 }

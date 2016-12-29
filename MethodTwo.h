@@ -36,7 +36,7 @@ matrixPosition searchForMinimum(adjacencyMatrix& theMatrix);
 
 double closestCityOnSubTour(const adjacencyMatrix& theMatrix, const Node& node, const vector<visited>& onSubTour, unsigned int& minKey);
 
-void updateUnvisited(unsigned int& nameOfNode, double& distance, unsigned int& nodeTo, list<unvisited>& offSubTour);
+void updateUnvisited(unsigned int& nameOfNode, double& distance, unsigned int& nodeTo, list<unvisited>& offSubTour, graphmap& theMap);
 
 void nearestInsertion(vector<visited>& onSubTour, unvisited& closestNode, double& distTour, adjacencyMatrix& theMatrix, graphmap& theMap);
 

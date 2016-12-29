@@ -10,7 +10,8 @@
 
 using namespace std;
 
-/* Start at random node */
+/* Step 1: Start at a Random Node */
+
 unsigned int RANDOM_NODE_KEY = 1;
 const unsigned int FIRST_NODE = 1;
 
@@ -26,7 +27,7 @@ void storeEdgesInMatrixAlgoThree(graphmap& theMap, double& totalDistance) {
 
   /* Set number of nodes in Matrix */
 
-  for(auto i : theMap) {
+  for(unsigned int i = 0; i < theMap.size(); ++i) {
     vector<Edge> *column = new vector<Edge>;
     theMatrix.push_back(*column);
   }
@@ -121,7 +122,7 @@ void traverseTourTwo(graphmap& theMap, unsigned int startnode) {
   
   cout << "Tour: " << currNode->name << " -> ";
 
-  for(int i = 0; i < theMap.size(); ++i) {
+  for(unsigned int i = 0; i < theMap.size(); ++i) {
     if(currNode->ptrOne != prevNode) {
       prevNode = currNode;
       currNode = currNode->ptrOne;

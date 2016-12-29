@@ -10,6 +10,14 @@
 
 using namespace std;
 
+
+/* Quick Note *****************************************************
+ * ****************************************************************
+ * 1: The tour being built here is with a collection of Node Structs: 
+ *    each struct has two Node pointers. 
+ * ****************************************************************
+ */
+
 void methodOne(graphmap& theMap, double& totalDistance) {
   getWeights(theMap, totalDistance);
   traverseTour(theMap);
@@ -19,16 +27,16 @@ void getWeights(graphmap& theMap, double& totalDistance) {
   minimumPriority queueOfEdges;
   double distance = 0.0;
 
-  /* For each node in a collection of N nodes... */
+  /* Step 1: For each node in a collection of N nodes... */
 
   for (unsigned int keyToCurrNode = 1; keyToCurrNode <= theMap.size(); ++keyToCurrNode) {
     
-    /* Caluclate the distance to all other nodes */
+    /* a: Caluclate the distance to all other nodes. */
 
     for(unsigned int otherNodeKey = 1; otherNodeKey <= theMap.size(); ++otherNodeKey) {
       if(otherNodeKey == keyToCurrNode) { /* Do Nothing */ }
       
-      /* Store distances in a Priority Queue : Underlying Heap Sort */
+      /* b: Store all edges in a Priority Queue | Underlying Heap Sort. */
 
       else {
         distance = getEuclideanDistance(theMap.at(keyToCurrNode), theMap.at(otherNodeKey));
@@ -37,7 +45,8 @@ void getWeights(graphmap& theMap, double& totalDistance) {
       } 
     }
   }
-  
+
+  //  Find Total distance of tour. 
   totalDistance = tour(theMap, queueOfEdges);
 }
 
@@ -53,16 +62,27 @@ double tour(graphmap& theMap, minimumPriority queueOfEdges) {
   unsigned int numberOfEdges = 0;
   double costOfTour = 0.0;
 
-  for(int i = 0; i < sizeOfQueue; ++i) {
+  /* Step 2: Iterates through all N edges and does a couple of checks 
+   * before adding an edge to the tour. We are iterating from lowest
+   * to highest cost edges. Simply pop() from queue.
+   */
+
+  for(unsigned int i = 0; i < sizeOfQueue; ++i) {
     const Edge *edgeToAdd = &queueOfEdges.top();
     unsigned int keyOne, keyTwo;
 
     keyOne = edgeToAdd->nameOfNodeOne;
     keyTwo = edgeToAdd->nameOfNodeTwo;
-  
+    
+    /* a: No connection can form a vertice with a third degree. */
+
     if(formsDegreeOfThree(theMap.at(keyOne), theMap.at(keyTwo))) {}
 
+    /* b: Detecting and preventing connections that cause a cycle. */
+
     else if(formsCycle(theMap, theMap.at(keyOne), theMap.at(keyTwo), numberOfEdges)) {}
+
+    /* c: Connect the nodes if both conditions are false. */
 
     else {
       costOfTour += edgeToAdd->weight;
@@ -91,6 +111,7 @@ bool formsCycle(graphmap& theMap, Node& node, Node& nodeToConnectWith, unsigned 
     currNode = &node;
 
     /* Traversal */
+
     while(currNode->ptrOne != nullptr || currNode->ptrTwo != nullptr) {
       if(currNode->name == nodeToConnectWith.name) {
         break;
@@ -143,28 +164,29 @@ void connect(Node& nodeOne, Node& nodeTwo) {
   }
 
   else {
-  if(nodeOne.ptrOne == nullptr && nodeTwo.ptrTwo == nullptr) {
-    nodeOne.ptrOne = &nodeTwo;
-    nodeTwo.ptrTwo  = &nodeOne;
-  }
+    if(nodeOne.ptrOne == nullptr && nodeTwo.ptrTwo == nullptr) {
+      nodeOne.ptrOne = &nodeTwo;
+      nodeTwo.ptrTwo  = &nodeOne;
+    }
 
-  else if(nodeOne.ptrOne != nullptr && nodeTwo.ptrTwo != nullptr) {
-    nodeOne.ptrTwo  = &nodeTwo;
-    nodeTwo.ptrOne = &nodeOne;
-  }
+    else if(nodeOne.ptrOne != nullptr && nodeTwo.ptrTwo != nullptr) {
+      nodeOne.ptrTwo  = &nodeTwo;
+      nodeTwo.ptrOne = &nodeOne;
+    }
  
-  else if(nodeOne.ptrOne != nullptr && nodeTwo.ptrTwo == nullptr) {
-    nodeOne.ptrTwo  = &nodeTwo;
-    nodeTwo.ptrTwo  = &nodeOne;
-  }
+    else if(nodeOne.ptrOne != nullptr && nodeTwo.ptrTwo == nullptr) {
+      nodeOne.ptrTwo  = &nodeTwo;
+      nodeTwo.ptrTwo  = &nodeOne;
+    }
 
-  else if(nodeOne.ptrOne == nullptr && nodeTwo.ptrTwo != nullptr) {
-    nodeOne.ptrOne = &nodeTwo;
-    nodeTwo.ptrOne = &nodeOne;
+    else if(nodeOne.ptrOne == nullptr && nodeTwo.ptrTwo != nullptr) {
+      nodeOne.ptrOne = &nodeTwo;
+      nodeTwo.ptrOne = &nodeOne;
+    }
   }
-}
 } 
 
+/* Convenience Functions */
 
 void traverseTour(graphmap& theMap) {
   Node *currNode; 
@@ -177,7 +199,7 @@ void traverseTour(graphmap& theMap) {
   
   cout << "Tour: " << currNode->name << " -> ";
 
-  for(int i = 0; i < theMap.size(); ++i) {
+  for(unsigned int i = 0; i < theMap.size(); ++i) {
     if(currNode->ptrOne != prevNode) {
       prevNode = currNode;
       currNode = currNode->ptrOne;

@@ -50,17 +50,16 @@ vector<pair<double, double>> Country::getCoordinates() const {
 
 ostream& operator<<(ostream& out, const Country& country) {
   country.printDivider();
-  out << "Name of Country: " << country.name_ << "\n";
-  out << "Number of Cities: " << country.dimension_ << "\n";
+  out << "Country name: " << country.name_ << "\n";
+  out << "Number of cities in the country: " << country.dimension_ << "\n";
   country.printDivider();
-  country.printCityCoord();
   return out;  
 }
 
 /* Convenience functions */ 
 
 void Country::printCityCoord() const {
-  for(int i = 0; i < cityCoordinates_.size(); ++i) {
+  for(unsigned int i = 0; i < cityCoordinates_.size(); ++i) {
     cout << "City " << i + 1; 
     
     if(i < 9) { cout << "  * ("; }
@@ -72,5 +71,5 @@ void Country::printCityCoord() const {
 }
 
 void Country::printDivider() const {
-  cout << "*************************\n";
+  cout << "*****************************************************\n";
 }

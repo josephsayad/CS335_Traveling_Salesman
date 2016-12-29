@@ -63,7 +63,7 @@ void InputParser::parse(const string& inputFileName) {
     pair<double, double> coordinates;
     double x_coord, y_coord;
     unsigned int numberOfCities;
-    int cityCount = 1;
+    unsigned int cityCount = 1;
     
     while(getline(inputFileHandler, lineOfFile)) {
         removeWhiteSpace(lineOfFile);
@@ -97,6 +97,7 @@ void InputParser::parse(const string& inputFileName) {
             lineOfFile.erase(0, lineOfFile.find(delimiter) + delimiter.length());
             
             /* token is x_coord and lineOfFile is y_coord */
+            
             token = lineOfFile.substr(0, lineOfFile.find(delimiter));
             lineOfFile.erase(0, lineOfFile.find(delimiter) + delimiter.length());
             

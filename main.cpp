@@ -7,8 +7,9 @@ int main(int argc, char* argv[]) {
   MethodControl controllerOne;
   controllerOne.fetchCommandLineArg(argv);
   controllerOne.fillGraph();
-  controllerOne.greedyTSP();
+  controllerOne.printCountryData();
+  // controllerOne.greedyTSP();
   controllerOne.nearestInsertion();
-  controllerOne.nearestNeighbor();
+  // controllerOne.nearestNeighbor();
   return 0;
 }

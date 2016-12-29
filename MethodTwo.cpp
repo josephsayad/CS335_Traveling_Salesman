@@ -12,7 +12,7 @@ using namespace std;
 
 void methodTwo(graphmap& theMap) {
   storeEdgesInMatrix(theMap);
-}
+} // clear
 
 void storeEdgesInMatrix(graphmap& theMap) {
   adjacencyMatrix theMatrix;
@@ -20,7 +20,7 @@ void storeEdgesInMatrix(graphmap& theMap) {
 
   /* Set number of nodes in Matrix */
 
-  for(auto i : theMap) {
+  for(unsigned int i = 0; i < theMap.size(); ++i) {
     vector<Edge> *column = new vector<Edge>;
     theMatrix.push_back(*column);
   }
@@ -48,7 +48,7 @@ void storeEdgesInMatrix(graphmap& theMap) {
   }
 
   tourHelper(theMap, theMatrix);
-}
+} // clear
 
 matrixPosition searchForMinimum(adjacencyMatrix& theMatrix) {
   matrixPosition minimumEdge = make_pair(0, 1);
@@ -69,11 +69,14 @@ matrixPosition searchForMinimum(adjacencyMatrix& theMatrix) {
   return minimumEdge;
 }
 
-void updateUnvisited(unsigned int& nameOfNode, double& distance, unsigned int& nodeTo, list<unvisited>& offSubTour) {
+void updateUnvisited(unsigned int& nameOfNode, double& distance, unsigned int& nodeTo, list<unvisited>& offSubTour, graphmap& theMap) {
   for(auto it = offSubTour.begin(); it != offSubTour.end(); ++it) {
-    if(it->first.name == nameOfNode) {
-      it->second.first = nodeTo; 
-      it->second.second = distance; 
+    if(theMap.at(it->first.name).isOnTour) { /* Skip */ }
+    else {
+      if(it->first.name == nameOfNode) {
+        it->second.first = nodeTo; 
+        it->second.second = distance; 
+      }
     }
   }
 }
@@ -110,6 +113,7 @@ void tourHelper(graphmap& theMap, adjacencyMatrix& theMatrix) {
 
   unsigned int recursiveCall = 0; // for recursion at 1 and beyond call update, don't push!
   double totalDistance = 0.0;
+ 
   tour(theMap, theMatrix, offSubTour, onSubTour, totalDistance, recursiveCall);
   cout << "Distance for Nearest Insertion Algorithm: " << totalDistance << endl;
 }
@@ -121,13 +125,13 @@ void tour(graphmap& theMap, adjacencyMatrix& theMatrix, list<unvisited>& offSubT
 
   unsigned int minKey; 
 
-  for(int node = 1; node <= theMap.size(); ++node) {
+  for(unsigned int node = 1; node <= theMap.size(); ++node) {
     if(theMap.at(node).isOnTour) { /*cout << theMap.at(node) << " on tour!\n";*/ }
 
     else {
       double distance = closestCityOnSubTour(theMatrix, theMap.at(node), onSubTour, minKey);
       if(recursiveCall == 0) { offSubTour.push_front(make_pair(theMap.at(node), make_pair(minKey, distance))); }
-      else { updateUnvisited(theMap.at(node).name, distance, minKey, offSubTour); }
+      else { updateUnvisited(theMap.at(node).name, distance, minKey, offSubTour, theMap); }
     }
   }
 
@@ -135,24 +139,38 @@ void tour(graphmap& theMap, adjacencyMatrix& theMatrix, list<unvisited>& offSubT
   *  subtour below. This will be city A. 
   */
 
+  for(auto it = offSubTour.begin(); it != offSubTour.end(); ++it) {
+    if(theMap.at(it->first.name).isOnTour) {
+      cout << "Not a possible add: " << it->first.name << endl;
+    }
+  }
+
   auto closestNode = offSubTour.begin();
 
+  for (auto it = offSubTour.begin(); it != offSubTour.end(); ++it) {
+    if(!theMap.at(it->first.name).isOnTour) {
+      cout << it->first.name << " is an option!\n";
+      closestNode = it;
+      break;
+    }
+  }
+  
   double smallestDist = closestNode->second.second, distCompare = 0.0;
 
   for(auto it = offSubTour.begin(); it != offSubTour.end(); ++it) {
-    distCompare = it->second.second;
-    
-    if(distCompare < smallestDist) {
-      closestNode = it;
-      smallestDist = distCompare;
-    }
-  }
+    if(theMap.at(it->first.name).isOnTour) { /*cout << theMap.at(node) << " on tour!\n";*/ }
 
-  for(auto it = offSubTour.begin(); it != offSubTour.end(); ++it) {
-    if(it == closestNode) {
-      offSubTour.erase(it);
-    }
+    else {
+      distCompare = it->second.second;
+    
+      if(distCompare < smallestDist) {
+        closestNode = it;
+        smallestDist = distCompare;
+      }
+    } 
   }
+  
+  theMap.at(closestNode->first.name).isOnTour = true; 
   
   nearestInsertion(onSubTour, *closestNode, totalDistance, theMatrix, theMap);
   ++recursiveCall; 
@@ -161,7 +179,7 @@ void tour(graphmap& theMap, adjacencyMatrix& theMatrix, list<unvisited>& offSubT
     traverseTourAlgoThree(theMap);
     return; 
   }
-
+  
   tour(theMap, theMatrix, offSubTour, onSubTour, totalDistance, recursiveCall);
 }
 
@@ -172,7 +190,7 @@ double closestCityOnSubTour(const adjacencyMatrix& theMatrix, const Node& node, 
   double minDistance = theMatrix.at(currNode - 1).at(node.name - 1).weight;
   double distCompare = 0.0;
 
-  for(int nodeCompare = 0; nodeCompare < onSubTour.size(); ++nodeCompare) {
+  for(unsigned int nodeCompare = 0; nodeCompare < onSubTour.size(); ++nodeCompare) {
     if(onSubTour.at(nodeCompare).name == currNode) { /* Skip */ }
     
     else {
@@ -222,6 +240,7 @@ void nearestInsertion(vector<visited>& onSubTour, unvisited& closestNode, double
 
   // cout << closestNode.first << " to " << secondClosestNode << " and " << closestNode.second.first << endl;
   double distToAdd = getDistOfSubTour(closestNode, secondClosestNode, theMatrix);
+  cout << "DIST TO ADD " << distToAdd << endl;
   distTour += distToAdd;
   
   addToTour(onSubTour, theMap, closestNode.second.first, secondClosestNode, closestNode.first.name);
@@ -330,7 +349,7 @@ void traverseTourAlgoThree(graphmap& theMap) {
   
   cout << "Tour: " << currNode->name << " -> ";
 
-  for(int i = 0; i < theMap.size(); ++i) {
+  for(unsigned int i = 0; i < theMap.size(); ++i) {
     if(currNode->ptrOne != prevNode) {
       prevNode = currNode;
       currNode = currNode->ptrOne;

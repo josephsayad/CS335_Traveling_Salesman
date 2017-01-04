@@ -8,6 +8,10 @@ In this assignment: 3 heuristic approximation algorithms for the traveling sales
 2. Nearest Insertion Algorithm
 3. Algorithm of Choice
 
+## Data Structure Picks 
+
+1. In method two, the Nearest insertion algorithm, I use a forward linked list for unvisited cities, and a vector for visited cities. But, why? Well - we only have to access the visited cities. But, for unvisited cities, there is a deletion following every edge added. To keep this constant, I'll keep a pointer to the closest city off the sub-tour. We can access, and delete this node from the list in constant time, or `O(1) steps`.
+
 ## Project Design
 
 ### Classes to be Implemented

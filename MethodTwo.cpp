@@ -12,7 +12,7 @@ using namespace std;
 
 void methodTwo(graphmap& theMap) {
   storeEdgesInMatrix(theMap);
-} // clear
+}
 
 void storeEdgesInMatrix(graphmap& theMap) {
   adjacencyMatrix theMatrix;
@@ -26,6 +26,7 @@ void storeEdgesInMatrix(graphmap& theMap) {
   }
   
   /* Store Edges in Matrix */
+
   for (unsigned int rowNode = 0; rowNode < theMatrix.size(); ++rowNode) {
     for(unsigned int columnNode = 0; columnNode < theMatrix.size(); ++columnNode) {
       
@@ -48,7 +49,7 @@ void storeEdgesInMatrix(graphmap& theMap) {
   }
 
   tourHelper(theMap, theMatrix);
-} // clear
+}
 
 matrixPosition searchForMinimum(adjacencyMatrix& theMatrix) {
   matrixPosition minimumEdge = make_pair(0, 1);
@@ -105,6 +106,8 @@ void tourHelper(graphmap& theMap, adjacencyMatrix& theMatrix) {
   list<unvisited> offSubTour;
   vector<visited> onSubTour;
 
+  /* Step 3: Add to Sub-Tour and Connect  */
+
   onSubTour.push_back(theMap.at(keytoNodeOne));
   onSubTour.push_back(theMap.at(keytoNodeTwo));
 
@@ -119,7 +122,7 @@ void tourHelper(graphmap& theMap, adjacencyMatrix& theMatrix) {
 }
 
 void tour(graphmap& theMap, adjacencyMatrix& theMatrix, list<unvisited>& offSubTour, vector<visited>& onSubTour, double& totalDistance, unsigned int& recursiveCall) {
-  /*  At each Node off the sub-tour find the closest city on the 
+  /*  Step 4: At each Node off the sub-tour find the closest city on the 
    *  sub-tour, and the distance to it below.
    */
 
@@ -135,25 +138,22 @@ void tour(graphmap& theMap, adjacencyMatrix& theMatrix, list<unvisited>& offSubT
     }
   }
 
- /*  Find the city that has the smallest distance listed to the 
+ /*  Step 5: Find the city that has the smallest distance listed to the 
   *  subtour below. This will be city A. 
   */
-
-  for(auto it = offSubTour.begin(); it != offSubTour.end(); ++it) {
-    if(theMap.at(it->first.name).isOnTour) {
-      cout << "Not a possible add: " << it->first.name << endl;
-    }
-  }
 
   auto closestNode = offSubTour.begin();
 
   for (auto it = offSubTour.begin(); it != offSubTour.end(); ++it) {
     if(!theMap.at(it->first.name).isOnTour) {
-      cout << it->first.name << " is an option!\n";
       closestNode = it;
       break;
     }
   }
+
+  /*  Step 6:  Select a city not in the subtour, having the shortest distance to any 
+  *   one of the cities in the sub-tour.
+  */
   
   double smallestDist = closestNode->second.second, distCompare = 0.0;
 
@@ -172,9 +172,13 @@ void tour(graphmap& theMap, adjacencyMatrix& theMatrix, list<unvisited>& offSubT
   
   theMap.at(closestNode->first.name).isOnTour = true; 
   
+  /*  Step 6:  Call nearestInsertion and recurse. 
+  */
+
   nearestInsertion(onSubTour, *closestNode, totalDistance, theMatrix, theMap);
   ++recursiveCall; 
 
+  // Base Case
   if(recursiveCall == theMap.size() - 2) { 
     traverseTourAlgoThree(theMap);
     return; 
@@ -207,7 +211,7 @@ double closestCityOnSubTour(const adjacencyMatrix& theMatrix, const Node& node, 
 }
 
 void nearestInsertion(vector<visited>& onSubTour, unvisited& closestNode, double& distTour, adjacencyMatrix& theMatrix, graphmap& theMap) {
-  /*  Find the second closest city to the unvisited city, which is 
+  /*  Step 7: Find the second closest city to the unvisited city, which is 
    *  already in our sub-tour. This is city X.  
    */
 
@@ -229,8 +233,6 @@ void nearestInsertion(vector<visited>& onSubTour, unvisited& closestNode, double
     if(onSubTour.at(i).name != closestNode.second.first && isAdjacent(onSubTour.at(i).name, closestNode.second.first, theMap)) {
       distCompare = theMatrix.at(onSubTour.at(i).name - 1).at(closestNode.first.name - 1).weight;
       
-      // cout << "Node " << onSubTour.at(i) << " makes it in!\n";
-
       if(distCompare < smallestDist) {
         smallestDist = distCompare;
         secondClosestNode = onSubTour.at(i).name;
@@ -238,9 +240,7 @@ void nearestInsertion(vector<visited>& onSubTour, unvisited& closestNode, double
     }
   }
 
-  // cout << closestNode.first << " to " << secondClosestNode << " and " << closestNode.second.first << endl;
   double distToAdd = getDistOfSubTour(closestNode, secondClosestNode, theMatrix);
-  cout << "DIST TO ADD " << distToAdd << endl;
   distTour += distToAdd;
   
   addToTour(onSubTour, theMap, closestNode.second.first, secondClosestNode, closestNode.first.name);

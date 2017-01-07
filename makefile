@@ -5,7 +5,7 @@ CFLAGS = -c -Wall
 # EXECUTABLE_NAME is the name of the program to run.
 # SOURCES includes all the .cpp files to compile.
 
-EXECUTABLE_NAME = Project2
+EXECUTABLE_NAME = FindTour
 SOURCES = main.cpp Country.cpp InputParser.cpp MethodControl.cpp MethodOne.cpp MethodTwo.cpp MethodThree.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)

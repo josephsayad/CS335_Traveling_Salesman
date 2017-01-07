@@ -1,26 +1,61 @@
-# Programming Assignment 2: Traveling Salesman Problem 
+# Programming Assignment 2: Traveling Salesman Problem (TSP)
 
-## About The Project
+## About the Project
 
-In this assignment: 3 heuristic approximation algorithms for the traveling salesman problem will be implemented.
+In this project: 3 heuristic approximation algorithms will be implemented for the traveling salesman problem.
 
 1. Greedy TSP Algorithm 
 2. Nearest Insertion Algorithm
-3. Algorithm of Choice
-
-## Data Structure Picks 
-
-1. In method two, the Nearest insertion algorithm, I use a forward linked list for unvisited cities, and a vector for visited cities. But, why? Well - we only have to access the visited cities. But, for unvisited cities, there is a deletion following every edge added. To keep this constant, I'll keep a pointer to the closest city off the sub-tour. We can access, and delete this node from the list in constant time, or `O(1) steps`.
+3. Nearest Neighbor Algorithm
 
 ## Project Design
 
 ### Classes to be Implemented
 
-1: `InputParser`
+1: `Country`
+2: `InputParser`
+3: `MethodControl`
 
-### A Driver Class: InputParser
+### Structs to be Implemented
 
-An instance of the `InputParser` class will serve as *one* of the *driver programs*, which will read the a text file of
+1: `Node`
+2: `Edge`
+
+## Algorithmic Analysis
+
+### Greedy TSP Algorithm 
+
+Implemented in the `MethodOne.cpp` and `MethodOne.h` files. 
+
+Step 1: Calculate all possible edges `(n^2 operations)`.
+Step 2: Sort all edges via underlying heap sort `(log n operations)`.
+Step 3: Select the shortest edge from a collection of edges `(1 operation)`.
+Step 4: If there are not `N` edges in the tour, repeat Step 2 `(1 operation)`. 
+
+Big `O(n^2 log n)` time complexity.
+
+### Nearest Insertion Algorithm 
+
+Implemented in the `MethodTwo.cpp` and `MethodTwo.h` files. 
+
+Step 1: Find the smallest edge `(n^2 operations)`.
+Step 2: Select a node off the subtour with the shortest distance to any of the nodes on the subtour `(n operations)`.
+Step 3: Find an edge on the subtour such that the cost of inserting is the smallest possible cost `(n operations)`.
+Step 4: Loop to Step 2 (1 operation).
+
+Big `O(n^2)` time complexity.
+
+### Nearest Insertion Algorithm
+
+Implemented in the `MethodThree.cpp` and `MethodThree.h` files. 
+
+Step 1: Calculate all possible edges `(n^2 operations)`.
+Step 2: Pick a random node `(1 operation)`.
+Step 3: Visit the nearest, unvisited node `(n operations)`.
+Step 4: Loop to Step 3 if there exists unvisited nodes `(1 operation)`.
+Step 5: Return to first node `(1 operation)`.
+
+Big `O(n^2)` time complexity.
 
 ## How To Compile the Program
 
@@ -29,6 +64,6 @@ An instance of the `InputParser` class will serve as *one* of the *driver progra
 The resulting program will compile, and execute via the following commands:
 
 	make all
-	./Project2 <input file name>
+	./FindTour <input file name>
 
 See the **data** directory for input files.

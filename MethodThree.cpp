@@ -33,6 +33,7 @@ void storeEdgesInMatrixAlgoThree(graphmap& theMap, double& totalDistance) {
   }
   
   /* Store Edges in Matrix */
+
   for (unsigned int rowNode = 0; rowNode < theMatrix.size(); ++rowNode) {
     for(unsigned int columnNode = 0; columnNode < theMatrix.size(); ++columnNode) {
       
@@ -76,6 +77,8 @@ void tour(graphmap& theMap, adjacencyMatrix& theMatrix, unvisited3& offSubTour, 
   auto minKey = offSubTour.begin();
   double minDistance = theMatrix.at(*minKey - 1).at(RANDOM_NODE_KEY - 1).weight, distToCompare = 0.0;
 
+  /* Step 2: Visit the nearest unvisited node */
+
   for(auto it = offSubTour.begin(); it != offSubTour.end(); ++it) {
     if(theMap.at(*it).isOnTour) { /* On tour - skip */ }
     else {
@@ -95,6 +98,9 @@ void tour(graphmap& theMap, adjacencyMatrix& theMatrix, unvisited3& offSubTour, 
   onSubTour.push_back(theMap.at(RANDOM_NODE_KEY).name);
   offSubTour.erase(minKey);
   RANDOM_NODE_KEY = *minKey;
+
+  /* Step 3: Base Case - Continue until there are 0 unvisited nodes. */
+  /* Step 4: Base Case - Return to the FIRST_NODE. */
 
   if(offSubTour.size() == 0) {
   	connect(theMap.at(*minKey), theMap.at(FIRST_NODE));
